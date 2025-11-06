@@ -1,15 +1,16 @@
 {
   "name": "my-love-quiz",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:supabase": "node src/testSupabase.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.80.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
