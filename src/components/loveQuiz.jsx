@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
+import UserInfoForm from "./userForm";
 
 export default function LoveQuiz() {
+  const [userInfo, setUserInfo] = useState(null);
+
   const QUESTIONS = [
     {
       id: 1,
@@ -100,18 +104,121 @@ export default function LoveQuiz() {
   const current = QUESTIONS[index];
   const resultKey = computeResult();
 
+  useEffect(() => {
+    if (showResult && resultKey) {
+      saveResult(resultKey);
+    }
+  }, [showResult, resultKey]);
+
+  async function saveResult(resultKey) {
+    if (!userInfo) return;
+    const resultTypes = {
+      a: "O Romântico",
+      b: "O Parceiro(a)",
+      c: "O Libertador(a)",
+      d: "O Guardião(ã)",
+    };
+
+    console.log("🔄 Tentando salvar resultado...");
+    console.log("User Info:", userInfo);
+    console.log("Result Key:", resultKey);
+    
+    const cardNumber = parseInt(userInfo.card_Number) || 0;
+    const resultado = resultTypes[resultKey] || null;
+    
+    const dataToSave = {
+      name: userInfo.name,
+      card_number: cardNumber,
+      turma: userInfo.turma || null,
+      ano_escolar: parseInt(userInfo.ano_escolar) || null,
+      resultado: resultado, // Tipo de amor do usuário
+    };
+    
+    console.log("📝 Dados para inserir/atualizar:", dataToSave);
+
+    // Verificar se já existe um registro com o mesmo card_number ou name
+    const { data: existingRecords, error: checkError } = await supabase
+      .from("quizz_results")
+      .select("id, card_number, name")
+      .or(`card_number.eq.${cardNumber},name.eq.${userInfo.name}`)
+      .limit(1);
+
+    let data, error;
+
+    // Se encontrou um registro existente (checkError é null e há dados)
+    if (!checkError && existingRecords && existingRecords.length > 0) {
+      // Já existe um registro - atualizar
+      console.log("📝 Registro existente encontrado. Atualizando...");
+      const { data: updateData, error: updateError } = await supabase
+        .from("quizz_results")
+        .update(dataToSave)
+        .eq("id", existingRecords[0].id)
+        .select();
+      
+      data = updateData;
+      error = updateError;
+    } else {
+      // Não existe - inserir novo
+      console.log("📝 Novo registro. Inserindo...");
+      // Tentar UPSERT primeiro (se card_number for único)
+      const upsertResult = await supabase
+        .from("quizz_results")
+        .upsert(
+          [dataToSave],
+          {
+            onConflict: 'card_number',
+            ignoreDuplicates: false
+          }
+        )
+        .select();
+      
+      // Se UPSERT falhar (card_number não único), tentar INSERT normal
+      if (upsertResult.error && (upsertResult.error.code === '23505' || upsertResult.error.message.includes('unique'))) {
+        console.log("⚠️ UPSERT falhou (card_number pode não ser único). Tentando INSERT...");
+        const insertResult = await supabase
+          .from("quizz_results")
+          .insert([dataToSave])
+          .select();
+        data = insertResult.data;
+        error = insertResult.error;
+      } else {
+        data = upsertResult.data;
+        error = upsertResult.error;
+      }
+    }
+
+    if (error) {
+      console.error("❌ Erro ao guardar:", error);
+      console.error("Mensagem:", error.message);
+      console.error("Código:", error.code);
+      console.error("Detalhes:", error.details);
+      alert(`Erro ao guardar resultado: ${error.message}`);
+    } else {
+      console.log("✅ Resultado guardado/atualizado no Supabase com sucesso!");
+      console.log("Dados salvos:", data);
+    }
+  }
+
+  if (!userInfo) return <UserInfoForm onSubmit={setUserInfo} />;
+
   return (
     <div className="max-w-3xl mx-auto p-6 min-h-screen bg-gray-900">
       <header className="mb-6 text-center">
-        <h1 className="text-3xl font-extrabold text-white">Quiz Interactivo: O Amor</h1>
-        <p className="text-sm text-gray-400 mt-1">Responda com sinceridade. No final, receberá um resultado tipo-personalidade.</p>
+        <h1 className="text-3xl font-extrabold text-white">Quiz Interativo: O Amor</h1>
+        <p className="text-sm text-gray-400 mt-1">
+          Responda com sinceridade. No final, receberá um resultado tipo-personalidade.
+        </p>
       </header>
 
       {!showResult && (
         <main className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="text-sm text-gray-300">Pergunta {index + 1} de {QUESTIONS.length}</div>
-            <div className="text-sm text-gray-400">Progresso: {Math.round(((index) / QUESTIONS.length) * 100)}%</div>
+            <div className="text-sm text-gray-300">
+              Pergunta {index + 1} de {QUESTIONS.length}
+            </div>
+            <div className="text-sm text-gray-400">
+              Progresso: {Math.round((index / QUESTIONS.length) * 100)}%
+            </div>
           </div>
 
           <h2 className="text-xl font-semibold mb-6 text-white">{current.q}</h2>
@@ -123,7 +230,11 @@ export default function LoveQuiz() {
                 <button
                   key={c.id}
                   onClick={() => selectChoice(current.id, c.id)}
-                  className={`text-left p-4 rounded-xl border transition-all focus:outline-none ${selected ? 'bg-pink-600 border-pink-500 shadow-lg shadow-pink-500/50 text-white' : 'bg-gray-700 border-gray-600 hover:bg-gray-650 hover:border-gray-500 text-gray-100'}`}
+                  className={`text-left p-4 rounded-xl border transition-all focus:outline-none ${
+                    selected
+                      ? "bg-pink-600 border-pink-500 shadow-lg shadow-pink-500/50 text-white"
+                      : "bg-gray-700 border-gray-600 hover:bg-gray-650 hover:border-gray-500 text-gray-100"
+                  }`}
                 >
                   <div className="font-medium">{c.text}</div>
                 </button>
@@ -133,12 +244,28 @@ export default function LoveQuiz() {
 
           <div className="mt-6 flex items-center justify-between">
             <div>
-              <button onClick={prev} disabled={index === 0} className="px-4 py-2 rounded-md border border-gray-600 bg-gray-700 text-gray-200 mr-2 disabled:opacity-50 hover:bg-gray-600">Anterior</button>
-              <button onClick={next} className="px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700">{index === QUESTIONS.length - 1 ? 'Ver Resultado' : 'Próxima'}</button>
+              <button
+                onClick={prev}
+                disabled={index === 0}
+                className="px-4 py-2 rounded-md border border-gray-600 bg-gray-700 text-gray-200 mr-2 disabled:opacity-50 hover:bg-gray-600"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={next}
+                className="px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700"
+              >
+                {index === QUESTIONS.length - 1 ? "Ver Resultado" : "Próxima"}
+              </button>
             </div>
 
             <div>
-              <button onClick={reset} className="text-sm text-pink-400 hover:text-pink-300 underline">Recomeçar</button>
+              <button
+                onClick={reset}
+                className="text-sm text-pink-400 hover:text-pink-300 underline"
+              >
+                Recomeçar
+              </button>
             </div>
           </div>
         </main>
@@ -148,22 +275,33 @@ export default function LoveQuiz() {
         <section className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
           <h2 className="text-2xl font-bold text-white">Resultado</h2>
           {!resultKey ? (
-            <p className="mt-4 text-gray-300">Não há respostas — por favor responda ao quiz.</p>
+            <p className="mt-4 text-gray-300">
+              Não há respostas — por favor responda ao quiz.
+            </p>
           ) : (
             <article className="mt-4">
-              <h3 className="text-xl font-semibold text-pink-400">{RESULTS[resultKey].title}</h3>
+              <h3 className="text-xl font-semibold text-pink-400">
+                {RESULTS[resultKey].title}
+              </h3>
               <p className="mt-2 text-gray-300">{RESULTS[resultKey].desc}</p>
 
               <div className="mt-4">
                 <h4 className="font-medium text-white">Conselho prático</h4>
-                <p className="mt-1 text-sm text-gray-400">{resultKey === 'a' && 'Abraça a paixão, mas lembre-se de construir confiança.'}
-                {resultKey === 'b' && 'Continue a construir com presença — vulnerabilidade é força.'}
-                {resultKey === 'c' && 'Equilibre liberdade com pequenos rituais de ligação.'}
-                {resultKey === 'd' && 'Cuidados consistentes geram segurança emocional — mantenha isso.'}</p>
+                <p className="mt-1 text-sm text-gray-400">
+                  {resultKey === "a" && "Abraça a paixão, mas lembre-se de construir confiança."}
+                  {resultKey === "b" && "Continue a construir com presença — vulnerabilidade é força."}
+                  {resultKey === "c" && "Equilibre liberdade com pequenos rituais de ligação."}
+                  {resultKey === "d" && "Cuidados consistentes geram segurança emocional — mantenha isso."}
+                </p>
               </div>
 
               <div className="mt-6 flex gap-3">
-                <button onClick={reset} className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700">Refazer</button>
+                <button
+                  onClick={reset}
+                  className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
+                >
+                  Refazer
+                </button>
               </div>
             </article>
           )}
