@@ -101,20 +101,20 @@ export default function LoveQuiz() {
   const resultKey = computeResult();
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl font-extrabold">Quiz Interactivo: O Amor</h1>
-        <p className="text-sm opacity-80 mt-1">Responda com sinceridade. No final, receberá um resultado tipo-personalidade.</p>
+    <div className="max-w-3xl mx-auto p-6 min-h-screen bg-gray-900">
+      <header className="mb-6 text-center">
+        <h1 className="text-3xl font-extrabold text-white">Quiz Interactivo: O Amor</h1>
+        <p className="text-sm text-gray-400 mt-1">Responda com sinceridade. No final, receberá um resultado tipo-personalidade.</p>
       </header>
 
       {!showResult && (
-        <main className="bg-white rounded-2xl shadow-md p-6">
+        <main className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="text-sm text-gray-600">Pergunta {index + 1} de {QUESTIONS.length}</div>
-            <div className="text-sm text-gray-500">Progresso: {Math.round(((index) / QUESTIONS.length) * 100)}%</div>
+            <div className="text-sm text-gray-300">Pergunta {index + 1} de {QUESTIONS.length}</div>
+            <div className="text-sm text-gray-400">Progresso: {Math.round(((index) / QUESTIONS.length) * 100)}%</div>
           </div>
 
-          <h2 className="text-xl font-semibold mb-4">{current.q}</h2>
+          <h2 className="text-xl font-semibold mb-6 text-white">{current.q}</h2>
 
           <div className="grid gap-3">
             {current.choices.map((c) => {
@@ -123,7 +123,7 @@ export default function LoveQuiz() {
                 <button
                   key={c.id}
                   onClick={() => selectChoice(current.id, c.id)}
-                  className={`text-left p-4 rounded-xl border transition-shadow focus:outline-none ${selected ? 'shadow-lg border-transparent ring-2 ring-offset-2 ring-pink-300' : 'border-gray-200 hover:shadow-sm'}`}
+                  className={`text-left p-4 rounded-xl border transition-all focus:outline-none ${selected ? 'bg-pink-600 border-pink-500 shadow-lg shadow-pink-500/50 text-white' : 'bg-gray-700 border-gray-600 hover:bg-gray-650 hover:border-gray-500 text-gray-100'}`}
                 >
                   <div className="font-medium">{c.text}</div>
                 </button>
@@ -133,44 +133,42 @@ export default function LoveQuiz() {
 
           <div className="mt-6 flex items-center justify-between">
             <div>
-              <button onClick={prev} disabled={index === 0} className="px-4 py-2 rounded-md border mr-2 disabled:opacity-50">Anterior</button>
-              <button onClick={next} className="px-4 py-2 rounded-md bg-pink-600 text-white">{index === QUESTIONS.length - 1 ? 'Ver Resultado' : 'Próxima'}</button>
+              <button onClick={prev} disabled={index === 0} className="px-4 py-2 rounded-md border border-gray-600 bg-gray-700 text-gray-200 mr-2 disabled:opacity-50 hover:bg-gray-600">Anterior</button>
+              <button onClick={next} className="px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700">{index === QUESTIONS.length - 1 ? 'Ver Resultado' : 'Próxima'}</button>
             </div>
 
             <div>
-              <button onClick={reset} className="text-sm underline">Recomeçar</button>
+              <button onClick={reset} className="text-sm text-pink-400 hover:text-pink-300 underline">Recomeçar</button>
             </div>
           </div>
         </main>
       )}
 
       {showResult && (
-        <section className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="text-2xl font-bold">Resultado</h2>
+        <section className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
+          <h2 className="text-2xl font-bold text-white">Resultado</h2>
           {!resultKey ? (
-            <p className="mt-4">Não há respostas — por favor responda ao quiz.</p>
+            <p className="mt-4 text-gray-300">Não há respostas — por favor responda ao quiz.</p>
           ) : (
             <article className="mt-4">
-              <h3 className="text-xl font-semibold">{RESULTS[resultKey].title}</h3>
-              <p className="mt-2 text-gray-700">{RESULTS[resultKey].desc}</p>
+              <h3 className="text-xl font-semibold text-pink-400">{RESULTS[resultKey].title}</h3>
+              <p className="mt-2 text-gray-300">{RESULTS[resultKey].desc}</p>
 
               <div className="mt-4">
-                <h4 className="font-medium">Conselho prático</h4>
-                <p className="mt-1 text-sm text-gray-600">{resultKey === 'a' && 'Abraça a paixão, mas lembre-se de construir confiança.'}
+                <h4 className="font-medium text-white">Conselho prático</h4>
+                <p className="mt-1 text-sm text-gray-400">{resultKey === 'a' && 'Abraça a paixão, mas lembre-se de construir confiança.'}
                 {resultKey === 'b' && 'Continue a construir com presença — vulnerabilidade é força.'}
                 {resultKey === 'c' && 'Equilibre liberdade com pequenos rituais de ligação.'}
                 {resultKey === 'd' && 'Cuidados consistentes geram segurança emocional — mantenha isso.'}</p>
               </div>
 
               <div className="mt-6 flex gap-3">
-                <button onClick={reset} className="px-4 py-2 bg-pink-600 text-white rounded-md">Refazer</button>
+                <button onClick={reset} className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700">Refazer</button>
               </div>
             </article>
           )}
         </section>
       )}
-
-      <footer className="mt-6 text-xs text-gray-500"></footer>
     </div>
   );
 }
