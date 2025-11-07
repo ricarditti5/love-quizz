@@ -31,7 +31,7 @@ O **Love Quiz** é uma aplicação web interativa que apresenta aos utilizadores
 ## ✨ Funcionalidades
 
 - ✅ Formulário de identificação do utilizador (nome, número do cartão, turma, ano escolar)
-- ✅ Quiz interativo com 4 questões sobre o amor
+- ✅ Quiz interativo com 10 questões sobre o amor
 - ✅ Cálculo automático do tipo de personalidade amorosa
 - ✅ Visualização do resultado com descrição e conselho prático
 - ✅ Guardar resultados na base de dados Supabase
@@ -274,7 +274,7 @@ Quando a aplicação é iniciada (quando abres o site no navegador), o utilizado
 
 ### 2. Realização do Quiz
 
-Após submeter o formulário (clicar em "Iniciar Quiz"), o utilizador responde a 4 questões sobre o amor:
+Após submeter o formulário (clicar em "Iniciar Quiz"), o utilizador responde a 10 questões sobre o amor:
 - Cada questão tem 4 opções de resposta (a, b, c, d)
 - O utilizador pode navegar entre questões usando os botões "Anterior" e "Próxima"
 - Pode recomeçar o quiz a qualquer momento (botão "Recomeçar")

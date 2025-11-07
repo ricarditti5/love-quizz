@@ -46,6 +46,66 @@ export default function LoveQuiz() {
         { id: "d", text: "Amar é cuidar com atenção" },
       ],
     },
+    {
+      id: 5,
+      q: "Quando o preconceito toca no seu amor, o que acontece?",
+      choices: [
+        { id: "a", text: "O amor fica mais forte e apaixonado para resistir" },
+        { id: "b", text: "O amor une-nos para construir algo melhor juntos" },
+        { id: "c", text: "O amor continua livre, sem se importar com o exterior" },
+        { id: "d", text: "O amor cria um espaço de proteção entre nós" },
+      ],
+    },
+    {
+      id: 6,
+      q: "Como funciona a pressão de paz no seu amor?",
+      choices: [
+        { id: "a", text: "Limita a intensidade e autenticidade dos sentimentos" },
+        { id: "b", text: "Cria uma base sólida para crescer juntos" },
+        { id: "c", text: "Não é necessária quando há liberdade verdadeira" },
+        { id: "d", text: "Garante que ambos se sentem seguros e cuidados" },
+      ],
+    },
+    {
+      id: 7,
+      q: "Na sua experiência, como o preconceito afeta o amor?",
+      choices: [
+        { id: "a", text: "Faz o amor arder com mais força e determinação" },
+        { id: "b", text: "Revela como o amor pode construir pontes entre diferenças" },
+        { id: "c", text: "O amor verdadeiro simplesmente existe, acima de tudo" },
+        { id: "d", text: "Faz o amor ser um lugar seguro onde nos refugiamos" },
+      ],
+    },
+    {
+      id: 8,
+      q: "Para si, manter a pressão de paz no amor significa:",
+      choices: [
+        { id: "a", text: "Suavizar sentimentos que deveriam ser intensos" },
+        { id: "b", text: "Investir na harmonia que fortalece a relação" },
+        { id: "c", text: "Algo que surge naturalmente sem esforço" },
+        { id: "d", text: "Garantir que o outro se sente protegido e estável" },
+      ],
+    },
+    {
+      id: 9,
+      q: "Quando há preconceito, o que o amor faz em si?",
+      choices: [
+        { id: "a", text: "Acende uma chama de defesa apaixonada" },
+        { id: "b", text: "Abre espaço para diálogo e compreensão mútua" },
+        { id: "c", text: "Permanece indiferente, mantendo a liberdade de ser" },
+        { id: "d", text: "Ativa o instinto de proteger o relacionamento" },
+      ],
+    },
+    {
+      id: 10,
+      q: "Como sente que a pressão de paz funciona no seu tipo de amor?",
+      choices: [
+        { id: "a", text: "Pode apagar a chama da paixão genuína" },
+        { id: "b", text: "É o cimento que une e fortalece a parceria" },
+        { id: "c", text: "Vem naturalmente quando há respeito e liberdade" },
+        { id: "d", text: "É essencial para sentir segurança e cuidado contínuo" },
+      ],
+    },
   ];
 
   const RESULTS = {
