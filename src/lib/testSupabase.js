@@ -40,8 +40,8 @@ async function testSupabase() {
   const testUser = {
     name: 'Teste Usuário',
     card_number: 123, // NUMERIC - deve ser único
-    turma: 'Teste',
-    ano_escolar: 10, // int2 (9, 10, 11 ou 12)
+    turma: 'Teste', //por exermplo nós sendo 11p2
+    ano_escolar: 10, // int2 (ano escolar que pertence)
     resultado: 'O Romântico' // Resultado do quiz
   };
 
