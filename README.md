@@ -1,3 +1,4 @@
+![Header](./header.png)
 # 📝 Love Quiz - Quiz Interativo sobre o Amor
 
 Um quiz interativo desenvolvido em React que permite aos utilizadores descobrirem o seu tipo de personalidade amorosa através de questões personalizadas. Os resultados são guardados numa base de dados Supabase.
@@ -434,3 +435,4 @@ Feito com intenção por Ricardo Kassoma e Joel Rodrigues — adapta, expande e 
 ---
 
 **Última actualização:** Novembro 2025
+![Footer](./footer.png)
